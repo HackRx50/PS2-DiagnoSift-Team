@@ -55,20 +55,24 @@ export async function processImages(files, rateLimit = 15, onProgress = () => {}
       console.log(`[${file.name}] Sending recognized text to Gemini for JSON formatting and diagnosis verification...`)
       let jsonData
       let correctedDiagnosis
+      let icd10Code
       try {
         jsonData = await sendToGemini(recognizedText)
         correctedDiagnosis = jsonData.provisional_diagnosis || 'Not found'
+        icd10Code = jsonData.ICD10_code || 'Not found'
         console.log(`[${file.name}] Gemini response:`, JSON.stringify(jsonData, null, 2))
       } catch (geminiError) {
         console.error(`[${file.name}] Error with Gemini AI:`, geminiError.message)
         console.log(`[${file.name}] Falling back to extracted provisional diagnosis...`)
         correctedDiagnosis = 'Error occurred'
+        icd10Code = 'Error occurred'
       }
 
       return {
         file_name: file.name,
         extracted_diagnosis: recognizedText,
         corrected_diagnosis: correctedDiagnosis,
+        icd10_code: icd10Code,
         processing_status: 'Success'
       }
     } catch (error) {
@@ -77,6 +81,7 @@ export async function processImages(files, rateLimit = 15, onProgress = () => {}
         file_name: file.name,
         extracted_diagnosis: 'Error occurred',
         corrected_diagnosis: 'Error occurred',
+        icd10_code: 'Error occurred',
         processing_status: 'Failed',
         error_message: error.message
       }
@@ -111,14 +116,21 @@ function extractRecognizedText(readResults) {
 
 async function sendToGemini(text) {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
-  const prompt = `Parse the following text and create a JSON object with all the relevant information the key should be "provisional_diagnosis".
-  
-  After parsing, review the "provisional_diagnosis" field. If it doesn't make sense or seems incomplete or contains a spelling mistake, correct it. Use your medical knowledge to suggest a more appropriate provisional diagnosis term, give a standardized provisional diagnosis which would work for all doctors.
-  
-  Text to parse:
-  
+  const prompt = `Analyze the following medical text and extract the provisional diagnosis. Create a JSON object with the following keys:
+  1. "provisional_diagnosis": The extracted provisional diagnosis.
+  2. "ICD10_code": The corresponding ICD-10-CM code for the diagnosis.
+
+  Rules:
+  - If the provisional diagnosis is clear and correct, use it as is.
+  - Only make minor corrections for obvious typos or standardization.
+  - If the diagnosis is unclear or seems incomplete, use the most appropriate term based on the available information.
+  - If no clear diagnosis is found, use "Unspecified diagnosis" and code as "R69".
+  - Always provide the most specific ICD-10-CM code possible based on the information given.
+
+  Text to analyze:
+
   ${text}
-  
+
   Please return only the JSON object, without any additional formatting or explanation.`
 
   const result = await model.generateContent(prompt)

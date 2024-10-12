@@ -48,6 +48,7 @@ function ResultsDisplay({ results }) {
               <StyledTableCell>File Name</StyledTableCell>
               <StyledTableCell>Extracted Diagnosis (Vision)</StyledTableCell>
               <StyledTableCell>Corrected Diagnosis (Gemini)</StyledTableCell>
+              <StyledTableCell>ICD-10 Code</StyledTableCell>
               <StyledTableCell align="center">Processing Status</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -57,6 +58,7 @@ function ResultsDisplay({ results }) {
                 <TableCell>{result.file_name}</TableCell>
                 <TableCell>{result.extracted_diagnosis}</TableCell>
                 <TableCell>{result.corrected_diagnosis}</TableCell>
+                <TableCell>{result.icd10_code}</TableCell>
                 <TableCell align="center">
                   <Chip
                     icon={result.processing_status === 'Success' ? <CheckCircleIcon /> : <ErrorIcon />}
