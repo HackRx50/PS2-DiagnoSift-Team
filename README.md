@@ -10,6 +10,24 @@ Both projects focus on extracting text from images or PDFs, but they have distin
 
 ---
 
+## Table of Contents
+- [Website Images](#website-images)
+- [1. Printed + Handwritten Text Extraction Model](#1-printed--handwritten-text-extraction-model)
+  - [Features](#features)
+  - [Installation](#installation)
+- [2. Printed Text Extraction Model](#2-printed-text-extraction-model)
+  - [Features](#features-1)
+  - [Installation](#installation-1)
+  - [Running the Project](#running-the-project)
+  
+## Website Images
+
+![image](https://github.com/user-attachments/assets/7dde2df0-4bef-4056-bb6c-b91129c92889)
+
+![image](https://github.com/user-attachments/assets/1f3d4654-155e-4c37-92a8-9ba1c8c9c220)
+
+![image](https://github.com/user-attachments/assets/7feea8fa-8392-4675-97d4-5c1f7aa35c0b)
+
 ## 1. Printed + Handwritten Text Extraction Model
 
 This project is a React application that allows users to upload images containing printed or handwritten text. The app uses the **Microsoft Vision API** for text extraction and sends the results to **Gemini AI** for further processing and formatting. Users can upload images, view extracted text, and export the results to an Excel file.
