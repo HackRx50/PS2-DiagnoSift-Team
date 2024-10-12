@@ -50,7 +50,7 @@ const Extract = () => {
       <Container maxWidth="lg">
         <Box sx={{ my: 4 }}>
           <Typography variant="h3" component="h1" gutterBottom align="center" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-            Extract Text from Images
+            Extract Diagnosis from Images!
           </Typography>
           
           <Paper elevation={3} sx={{ p: 3, mb: 4, bgcolor: 'background.paper', borderRadius: 2 }}>
