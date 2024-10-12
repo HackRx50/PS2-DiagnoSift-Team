@@ -1,9 +1,10 @@
 # Text Extraction Models
 
-This repository contains two Models: 
+This repository contains two main Models: 
 
 1. **Printed + Handwritten Text Extraction Model (Main project)**
 2. **Printed Text Extraction Model**
+3. **future_scope_for_NEURAL_NETWORK_INTEGRATION_WITH_API (We plan to integrate this model in future with api)**
 
 Both projects focus on extracting text from images or PDFs, but they have distinct features and use cases. The **Printed + Handwritten Text Extraction Model** processes printed or handwritten text from images, while the **Medical Data Extractor** focuses on analyzing text from medical documents in PDF format. Below are the details for each project.
 
