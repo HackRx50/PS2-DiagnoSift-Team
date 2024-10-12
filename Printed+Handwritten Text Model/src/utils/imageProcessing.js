@@ -52,10 +52,6 @@ export async function processImages(files, rateLimit = 15, onProgress = () => {}
       const recognizedText = extractRecognizedText(printedResult)
       console.log(`[${file.name}] Extracted text:`, recognizedText)
 
-      console.log(`[${file.name}] Extracting provisional diagnosis from Vision data...`)
-      const extractedDiagnosis = extractProvisionalDiagnosis(recognizedText)
-      console.log(`[${file.name}] Extracted diagnosis:`, extractedDiagnosis)
-
       console.log(`[${file.name}] Sending recognized text to Gemini for JSON formatting and diagnosis verification...`)
       let jsonData
       let correctedDiagnosis
@@ -66,12 +62,12 @@ export async function processImages(files, rateLimit = 15, onProgress = () => {}
       } catch (geminiError) {
         console.error(`[${file.name}] Error with Gemini AI:`, geminiError.message)
         console.log(`[${file.name}] Falling back to extracted provisional diagnosis...`)
-        correctedDiagnosis = extractedDiagnosis
+        correctedDiagnosis = 'Error occurred'
       }
 
       return {
         file_name: file.name,
-        extracted_diagnosis: extractedDiagnosis,
+        extracted_diagnosis: recognizedText,
         corrected_diagnosis: correctedDiagnosis,
         processing_status: 'Success'
       }
@@ -113,26 +109,20 @@ function extractRecognizedText(readResults) {
   return allText
 }
 
-function extractProvisionalDiagnosis(text) {
-  const regex = /(?:Provisional diagnosis|provisional diagnosis|provisional Diagnosis)\s*:?\s*(.*?)(?:\n|$)/i
-  const match = text.match(regex)
-  return match ? match[1].trim() : 'Not found'
-}
-
 async function sendToGemini(text) {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
-  const prompt = `Parse the following text and create a JSON object with all the relevant information. Include fields such as "nature_of_illness", "relevant_critical_findings", "duration_of_ailment", "date_of_first_consultation", "past_history", "provisional_diagnosis", "icd_10_code", "proposed_treatment", and any other relevant fields you can extract. If a field is empty or not provided, include it with an empty string value.
-
-After parsing, review the "provisional_diagnosis" field. If it doesn't make sense or seems incomplete or spelling mistake, correct it based on the other information provided (especially the "nature_of_illness" and "relevant_critical_findings" and "past_history"), use your medical knowledge to suggest a more appropriate provisional diagnosis. For example, if the nature of illness mentions "Cataract" and relevant findings include "RE Cataract Nuclear", but the provisional diagnosis is just "Nuclear" which doesnt make sense, modify it to "RE cataract nuclear".
-
-Text to parse:
-
-${text}
-
-Please return only the JSON object, without any additional formatting or explanation.`
+  const prompt = `Parse the following text and create a JSON object with all the relevant information the key should be "provisional_diagnosis".
+  
+  After parsing, review the "provisional_diagnosis" field. If it doesn't make sense or seems incomplete or contains a spelling mistake, correct it. Use your medical knowledge to suggest a more appropriate provisional diagnosis term, give a standardized provisional diagnosis which would work for all doctors.
+  
+  Text to parse:
+  
+  ${text}
+  
+  Please return only the JSON object, without any additional formatting or explanation.`
 
   const result = await model.generateContent(prompt)
-  const responseText = result.response.text()
+  const responseText = await result.response.text()
   
   // Remove Markdown code blocks and any leading/trailing whitespace
   const cleanedResponse = responseText.replace(/```json\n?|\n?```/g, '').trim()
