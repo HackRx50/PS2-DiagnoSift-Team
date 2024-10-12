@@ -36,7 +36,7 @@ const Home = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen"
     >
-      <Box className="bg-gradient-to-r from-[#1A1A1A] to-[#2C2C2C] text-white py-16 relative overflow-hidden">
+      <Box className="bg-gradient-to-r from-[#1A1A1A] to-[#2C2C2C] text-white py-16 px-6 relative overflow-hidden rounded-lg">
       <Container maxWidth="lg" className="relative z-10">
         <Grid container spacing={4} alignItems="center">
           <Grid item xs={12} md={6}>
