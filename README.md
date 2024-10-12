@@ -142,12 +142,12 @@ This project extracts and analyzes data from medical documents (such as prescrip
 
 1. Start the backend:
    ```bash
-   cd Printed Text Model/backend
+   cd Printed Text Model/medical-data-extraction/backend
    python src/main.py
    ```
 
 2. Run the frontend:
    ```bash
-   cd Printed Text Model/frontend
+   cd Printed Text Model/medical-data-extraction/frontend
    streamlit run app.py
    ```
