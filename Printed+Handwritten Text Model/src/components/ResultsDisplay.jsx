@@ -41,9 +41,6 @@ function ResultsDisplay({ results }) {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-        Extraction Results
-      </Typography>
       <TableContainer component={Paper} sx={{ mb: 2, borderRadius: 2, overflow: 'hidden' }}>
         <Table>
           <TableHead>

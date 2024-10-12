@@ -71,15 +71,15 @@ const Extract = () => {
           </Typography>
           <ImageUpload onUpload={handleImageUpload} isProcessing={isProcessing} progress={progress} />
 
-          {/* Loading Indicator */}
           {isProcessing && (
-            <Box sx={{ mt: 4 }}>
-              <CircularProgress color="primary" />
-              <Typography variant="body2" className="text-gray-400 mt-2">
-                Processing images... {progress}%
-              </Typography>
-            </Box>
-          )}
+          <Box className="mr-3" sx={{ mt: 4, display: 'flex', alignItems: 'center',  justifyContent: 'center'}}>
+            <CircularProgress color="primary" size={24} /> {/* Adjust size as needed */}
+            <Typography variant="body2" className="text-gray-400">
+              Processing images... {Math.round(progress * 100)}%
+            </Typography>
+          </Box>
+        )}
+
         </Paper>
 
         {/* Results Section */}
