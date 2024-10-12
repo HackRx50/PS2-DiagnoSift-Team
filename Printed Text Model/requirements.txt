@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pdf2image
+pytesseract
+pandas
+openpyxl
+xlsxwriter
+python-multipart
+numpy
+opencv-python
+streamlit
+requests
+streamlit-lottie
+streamlit-option-menu
