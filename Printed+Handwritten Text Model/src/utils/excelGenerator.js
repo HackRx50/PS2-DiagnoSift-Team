@@ -1,4 +1,3 @@
-// File: src/utils/excelGenerator.js
 import * as XLSX from 'xlsx';
 
 export const generateExcel = (data) => {
@@ -6,6 +5,7 @@ export const generateExcel = (data) => {
     'File Name': item.file_name,
     'Extracted Diagnosis': item.extracted_diagnosis,
     'Corrected Diagnosis': item.corrected_diagnosis,
+    'ICD-10 Code': item.icd10_code,  // Added ICD-10 Code column
     'Processing Status': item.processing_status
   })));
 
