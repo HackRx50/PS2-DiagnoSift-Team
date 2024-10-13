@@ -63,7 +63,7 @@ function ResultsDisplay({ results }) {
                   <Chip
                     icon={result.processing_status === 'Success' ? <CheckCircleIcon /> : <ErrorIcon />}
                     label={result.processing_status}
-                    color={result.processing_status === 'Success' ? 'success' : 'error'}
+                    color={result.processing_status === 'Success' ? 'success' : 'unsuccessful'}
                     variant="outlined"
                   />
                 </TableCell>

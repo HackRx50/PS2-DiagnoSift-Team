@@ -4,8 +4,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Typography, Box, Container, Paper, CircularProgress, Grid, Button } from '@mui/material';
 import ImageUpload from '../components/ImageUpload';
 import ResultsDisplay from '../components/ResultsDisplay';
-import { processImages } from '../utils/imageProcessing';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import axios from 'axios';
 
 const darkTheme = createTheme({
   palette: {
@@ -27,22 +27,49 @@ const Extract = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState([]);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState(null);
 
   const handleImageUpload = async (files) => {
     setIsProcessing(true);
     setProgress(0);
     setResults([]);
+    setError(null);
 
-    try {
-      const processedResults = await processImages(files, 15, (progress) => {
-        setProgress(progress);
-      });
-      setResults(processedResults);
-    } catch (error) {
-      console.error('Error processing images:', error);
-    } finally {
-      setIsProcessing(false);
+    const processedResults = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const formData = new FormData();
+      formData.append('image', file);  // Make sure this matches the backend expectation
+
+      try {
+        const response = await axios.post('http://localhost:8000/api/process-image/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        processedResults.push({
+          ...response.data,
+          processing_status: 'Success',
+        });
+      } catch (error) {
+        console.error('Error processing image:', error);
+        setError(error.response?.data?.error || 'An error occurred while processing the image');
+        processedResults.push({
+          file_name: file.name,
+          extracted_diagnosis: 'Error',
+          corrected_diagnosis: 'Error',
+          icd10_code: 'Error',
+          processing_status: 'Error',
+        });
+      }
+
+      setProgress((i + 1) / files.length);
     }
+
+    setResults(processedResults);
+    setIsProcessing(false);
   };
 
   return (
@@ -72,17 +99,23 @@ const Extract = () => {
           <ImageUpload onUpload={handleImageUpload} isProcessing={isProcessing} progress={progress} />
 
           {isProcessing && (
-          <Box className="mr-3" sx={{ mt: 4, display: 'flex', alignItems: 'center',  justifyContent: 'center'}}>
-            <CircularProgress color="primary" size={24} /> {/* Adjust size as needed */}
-            <Typography variant="body2" className="text-gray-400">
-              Processing images... {Math.round(progress * 100)}%
+            <Box className="mr-3" sx={{ mt: 4, display: 'flex', alignItems: 'center',  justifyContent: 'center'}}>
+              <CircularProgress color="primary" size={24} />
+              <Typography variant="body2" className="text-gray-400">
+                Processing images... {Math.round(progress * 100)}%
+              </Typography>
+            </Box>
+          )}
+
+          {/* {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
             </Typography>
-          </Box>
-        )}
+          )} */}
 
         </Paper>
 
-        {/* Results Section */}
+        {/* Results Section */} 
         {results.length > 0 && (
           <Paper elevation={3} sx={{ p: 4, bgcolor: 'background.paper', borderRadius: 2 }}>
             <Typography variant="h4" gutterBottom className="text-white">
@@ -126,22 +159,6 @@ const Extract = () => {
               </Typography>
             </Grid>
           </Grid>
-
-          {/* Button for Redirect */}
-          <Box sx={{ mt: 5 }}>
-            <Button
-              variant="contained"
-              color="secondary"
-              href="https://krhh5ptj-8501.inc1.devtunnels.ms/"
-              target="_blank"
-              className='mt-3 mb-4'
-            >
-              Use our Printed Text Model
-            </Button>
-            <Typography variant="body2" className="text-gray-400 mt-5">
-              For printed forms, use our dedicated tool for better accuracy in text extraction.
-            </Typography>
-          </Box>
         </Box>
       </Container>
     </ThemeProvider>
